@@ -32,9 +32,8 @@ replay_pid*
 .env
 .env.*
 !.env.example
-application.properties
-application-*.properties
-!application-example.properties
+# application.properties and profiles are tracked so default configs exist
+# application.properties
 secrets/
 *.pem
 *.key
