@@ -12,4 +12,9 @@ public class TestController {
     public String protectedEndpoint() {
         return "JWT Authentication is working!";
     }
+
+    @GetMapping("/health")
+    public String health() {
+        return "OK";
+    }
 }

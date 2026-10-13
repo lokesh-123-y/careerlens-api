@@ -42,8 +42,8 @@ public class SecurityConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:5173")
+        configuration.setAllowedOriginPatterns(
+                List.of("*")
         );
 
         configuration.setAllowedMethods(
@@ -104,7 +104,8 @@ public class SecurityConfig {
 
                         // Login and Register don't need JWT
                         .requestMatchers(
-                                "/api/auth/**"
+                                "/api/auth/**",
+                                "/api/test/health"
                         ).permitAll()
 
                         // Everything else needs JWT

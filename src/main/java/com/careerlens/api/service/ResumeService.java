@@ -1,3 +1,4 @@
+
 package com.careerlens.api.service;
 
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class ResumeService {
 
         String fileName = file.getOriginalFilename();
 
-        if (fileName == null) {
+        if (fileName == null || fileName.isBlank()) {
             throw new RuntimeException(
                     "Invalid resume file name");
         }
@@ -74,11 +75,11 @@ public class ResumeService {
                     "Could not extract text. Please use a text-based PDF or DOCX file.");
         }
 
-        // Detect skills
+        // Detect skills from resume text
         List<String> detectedSkills =
                 resumeSkillService.extractSkills(resumeText);
 
-        // Create upload folder
+        // Create upload folder if it does not exist
         Path uploadPath = Paths.get(uploadDirectory);
         Files.createDirectories(uploadPath);
 
@@ -100,14 +101,28 @@ public class ResumeService {
 
         resume.setFileName(fileName);
         resume.setFilePath(filePath.toString());
+
         resume.setFileType(
                 lowerFileName.endsWith(".pdf")
                         ? "application/pdf"
                         : "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+
         resume.setSkills(String.join(", ", detectedSkills));
         resume.setUser(user);
         resume.setUploadedAt(LocalDateTime.now());
 
         return resumeRepository.save(resume);
+    }
+
+    // Get the resume belonging to a user by email
+    public List<Resume> getUserResumes(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        return resumeRepository.findByUser(user)
+                .map(List::of)
+                .orElseGet(List::of);
     }
 }
